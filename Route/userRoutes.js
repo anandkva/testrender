@@ -24,7 +24,7 @@ routes.post('/login', async (req, res) => {
         //Password verify
         const verifyPassword = await bcrypt.compare(password, existingUser.hashPassword);
         if (verifyPassword) {
-            const token = await jwt.sign({ email: existingUser.email }, process.env.SCERET_KEY)
+            const token = await jwt.sign({ email: existingUser.email }, "Test")
             res.cookie('accessToken', token, { expire: new Date() + 86400000 });
             return res.status(200).send({ message: 'User signed-in successfully.', token, redirectUrl: '/textArea' });
         }
@@ -67,53 +67,53 @@ routes.post('/Signup', async (req, res) => {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------
 
-routes.post('/forgot-password', async (req, res) => {
-    const { email } = req.body;
+// routes.post('/forgot-password', async (req, res) => {
+//     const { email } = req.body;
 
-    try {
-        const user = await User.findOne({ email: email });
+//     try {
+//         const user = await User.findOne({ email: email });
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+//         if (!user) {
+//             return res.status(404).json({ message: 'User not found' });
+//         }
 
-        const resetToken = crypto.randomBytes(20).toString('hex');
-        user.resetToken = resetToken;
-        user.resetTokenExpiration = Date.now() + 3600000; // Token valid for 1 hour
-        await user.save();
+//         const resetToken = crypto.randomBytes(20).toString('hex');
+//         user.resetToken = resetToken;
+//         user.resetTokenExpiration = Date.now() + 3600000; // Token valid for 1 hour
+//         await user.save();
 
-        // Send password reset email
-        const transporter = nodemailer.createTransport({
-            // Configure your email provider settings
-            service: 'gmail',
-            auth: {
-                user: process.env.user,
-                pass: process.env.pass
-            }
-        });
+//         // Send password reset email
+//         const transporter = nodemailer.createTransport({
+//             // Configure your email provider settings
+//             service: 'gmail',
+//             auth: {
+//                 user: process.env.user,
+//                 pass: process.env.pass
+//             }
+//         });
 
-        const mailOptions = {
-            from: process.env.user,
-            to: user.email,
-            subject: 'Password Reset',
-            text: `Click the following link to reset your password:${process.env.API_URL}/Reset-password/${resetToken}`,
-        };
+//         const mailOptions = {
+//             from: process.env.user,
+//             to: user.email,
+//             subject: 'Password Reset',
+//             text: `Click the following link to reset your password:${process.env.API_URL}/Reset-password/${resetToken}`,
+//         };
 
-        await transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.log('Error sending email:', error);
-                return false;
-            } else {
-                console.log('Email sent:', info.response);
-                return true
-            }
-        });
+//         await transporter.sendMail(mailOptions, (error, info) => {
+//             if (error) {
+//                 console.log('Error sending email:', error);
+//                 return false;
+//             } else {
+//                 console.log('Email sent:', info.response);
+//                 return true
+//             }
+//         });
 
-        res.json({ message: 'Password reset email sent' });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error' });
-    }
-});
+//         res.json({ message: 'Password reset email sent' });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// });
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -148,7 +148,7 @@ routes.post('/Reset-password/:resetToken', async (req, res) => {
 
 routes.get('/logout', isAuth, async (req, res) => {
     try {
-        await res.clearCookie('accessToken');
+        // await res.clearCookie('accessToken');
         res.status(200).send({ message: 'User signed-out!', redirectUrl: "/" });
     } catch (error) {
         res.status(500).json({ message: 'Server error' });

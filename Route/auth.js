@@ -2,12 +2,13 @@ const jwt = require('jsonwebtoken');
 
 exports.isAuth = async (req, res, next) => {
 
-    const { cookies } = req;
+    const { cookies } = req.headers;
+    console.log("res", cookies)
 
     // console.log(req.cookies.accessToken);
-    if (cookies.accessToken) {
+    if (cookies) {
 
-        let user = jwt.verify(cookies.accessToken, process.env.SCERET_KEY)
+        let user = jwt.verify(cookies, "Test")
 
         req.user = user;
         if (!req.user) {

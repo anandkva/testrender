@@ -38,7 +38,7 @@ routes.post('/content', isAuth, async (req, res) => {
 
 routes.get('/getContent', isAuth, async (req, res) => {
     try {
-        console.log(req.user.email);
+        console.log("hai");
         await Content.find({ userEmail: req.user.email }).then(content => {
             if (!content) {
                 return res.status(404).send({ message: 'No content found' })
